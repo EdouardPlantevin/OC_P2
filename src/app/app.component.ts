@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { take } from 'rxjs';
 import { OlympicService } from './core/services/olympic.service';
+import {RouterOutlet} from "@angular/router";
+import {CommonModule} from "@angular/common";
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    standalone: false
+  selector: 'app-root',
+  template: `
+    <router-outlet/>
+  `,
+  imports: [
+    RouterOutlet,
+    CommonModule
+  ],
+  standalone: true
 })
-export class AppComponent implements OnInit {
-  constructor(private olympicService: OlympicService) {}
-
-  ngOnInit(): void {
-    this.olympicService.loadInitialData().pipe(take(1)).subscribe();
-  }
+export class AppComponent {
 }

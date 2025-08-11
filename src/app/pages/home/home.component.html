@@ -1,11 +1,18 @@
-@for (olympic of olympics$(); track olympic.id) {
-  <h3>{{ olympic.country }}</h3>
+<div class="container flex flex-col align-items-center gap-16">
+  <h1 class="xs-full-width">Medals per Country</h1>
 
-  @for (participation of olympic.participations; track $index) {
-    <p>
-      {{ participation.year }} - {{ participation.city }} -
-      Médailles: {{ participation.medalsCount }} -
-      Athlètes: {{ participation.athleteCount }}
-    </p>
-  }
-}
+  <div class="flex xs-flex-col xs-full-width">
+    <div class="card">
+      <p class="text-light">Number of JOs</p>
+      <p class="text-bold">10</p>
+    </div>
+    <div class="card">
+      <p class="text-light">Number of countries</p>
+      <p class="text-bold">10</p>
+    </div>
+
+    <div class="container-chart">
+        <!--   TODO: chart     -->
+    </div>
+  </div>
+</div>

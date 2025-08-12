@@ -4,6 +4,10 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 export const routes: Routes = [
   {
+    path: 'detail/:id',
+    loadComponent: async () => (await import('./pages/detail/detail.component')).DetailComponent
+  },
+  {
     path: '',
     component: HomeComponent,
   },

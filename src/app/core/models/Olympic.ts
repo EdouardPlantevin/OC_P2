@@ -1,10 +1,4 @@
-export interface Participation {
-  id: number;
-  year: number;
-  city: string;
-  medalsCount: number;
-  athleteCount: number;
-}
+import {Participation} from "./Participation";
 
 export interface OlympicCountry {
   id: number;

@@ -1,5 +1,5 @@
 import {httpResource} from '@angular/common/http';
-import {computed, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {OlympicCountry} from "../models/Olympic";
 
 @Injectable({
@@ -23,10 +23,6 @@ export class OlympicService {
 
   // > Fonction
   getFormattedOlympicCountriesPieChart(olympicsCountry: OlympicCountry[]) {
-    if (!olympicsCountry) {
-      return { countryName: [], totalMedals: [], countryId: [] };
-    }
-
     // On crée un tableau intermédiaire avec les pays et leur total de médailles
     let olympicsFormatted = olympicsCountry.map(olympic => {
       return {
@@ -36,7 +32,9 @@ export class OlympicService {
       };
     });
 
-    // On trie par totalMedals décroissant
+    console.log(olympicsFormatted)
+
+    //On trie par totalMedals décroissant
     olympicsFormatted.sort((a, b) => b.totalMedals - a.totalMedals);
 
     // On sépare en deux tableaux
@@ -45,6 +43,25 @@ export class OlympicService {
       totalMedals: olympicsFormatted.map(item => item.totalMedals),
       countryId: olympicsFormatted.map(item => item.countryId)
     };
+  }
+
+  getFormattedOlympicCountriesLineChart(olympicsCountry?: OlympicCountry) {
+
+    if (!olympicsCountry) return { year: [], totalMedals: [] };
+
+    let olympicsFormatted = olympicsCountry.participations.map(olympic => {
+      return {
+        year: olympic.year.toString(),
+        medalsCountByYear: olympic.medalsCount
+      };
+    });
+
+    // On sépare en deux tableaux
+    return {
+      year: olympicsFormatted.map(item => item.year),
+      totalMedals: olympicsFormatted.map(item => item.medalsCountByYear)
+    };
+
   }
   // < Fonction
 

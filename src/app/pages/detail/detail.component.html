@@ -8,8 +8,13 @@
 
   </div>
 
-  <div class="container-chart">
-    <!--   TODO: chart     -->
-    <pre>{{ olympic() | json }}</pre>
-  </div>
+    @if (olympic()) {
+        <div class="container-chart">
+            <app-line-chart [olympicCountry]="olympic()" />
+        </div>
+    } @else {
+        <p>Chargement...</p>
+    }
+
+
 </div>

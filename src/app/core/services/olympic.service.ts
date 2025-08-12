@@ -1,5 +1,5 @@
-import {HttpClient, httpResource} from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import {httpResource} from '@angular/common/http';
+import {Injectable} from '@angular/core';
 import {OlympicCountry} from "../models/Olympic";
 
 @Injectable({
@@ -8,10 +8,14 @@ import {OlympicCountry} from "../models/Olympic";
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
 
-  constructor(private http: HttpClient) {}
-
   olympicsResource = httpResource<OlympicCountry[]>(() => ({
     url: this.olympicUrl,
     method: 'GET'
   }));
+
+  getOlympicById(id: number): OlympicCountry | undefined {
+    const olympics = this.olympicsResource.value();
+    return olympics?.find(olympicCountry => olympicCountry.id == id);
+  }
+
 }

@@ -1,14 +1,14 @@
-import {Component, computed, effect, inject} from '@angular/core';
+import {Component, computed, inject} from '@angular/core';
 import {CardComponent} from "../../components/card/card.component";
 import {ActivatedRoute} from "@angular/router";
 import {OlympicService} from "../../core/services/olympic.service";
-import {JsonPipe} from "@angular/common";
+import {LineChartComponent} from "../../components/line-chart/line-chart.component";
 
 @Component({
   selector: 'app-detail',
   imports: [
     CardComponent,
-    JsonPipe
+    LineChartComponent
   ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss'
@@ -18,8 +18,8 @@ export class DetailComponent {
   private olympicService = inject(OlympicService);
 
   // Get olympic
-  id = this.route.snapshot.params['id'];
-  public olympic = computed(() => this.olympicService.getOlympicById(this.id) || null);
+  id: number = this.route.snapshot.params['id'];
+  public olympic = computed(() => this.olympicService.getOlympicById(this.id));
 
   totalAthleteCount = computed(() => {
     const olympicData = this.olympic();

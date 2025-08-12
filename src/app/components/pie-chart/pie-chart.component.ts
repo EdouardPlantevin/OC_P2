@@ -1,4 +1,4 @@
-import { Component, computed, effect, EffectRef, inject, input, OnDestroy, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, input, OnDestroy, OnInit } from '@angular/core';
 import {
   ActiveElement,
   Chart,
@@ -29,8 +29,6 @@ export class PieChartComponent implements OnInit, OnDestroy {
   readonly olympicFormattedChartPie = computed(() =>
     this.olympicService.getFormattedOlympicCountriesPieChart(this.olympicCountries())
   );
-
-  private effectRef!: EffectRef;
 
   public readonly config: ChartConfiguration<'pie', number[], string> = {
     type: 'pie',
@@ -69,7 +67,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
       onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
         if (elements?.length) {
           const countryId = this.olympicFormattedChartPie().countryId[elements[0].index];
-          this.router.navigateByUrl(`/detail/${countryId}`);
+          void this.router.navigateByUrl(`/detail/${countryId}`);
         }
       }
     },
@@ -79,7 +77,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
   private chart?: Chart<'pie', number[], string>;
 
   constructor() {
-    this.effectRef = effect(() => {
+    effect(() => {
       if (!this.chart) return;
       const formatted = this.olympicFormattedChartPie();
       this.chart.data.labels = formatted.countryName;
@@ -93,7 +91,6 @@ export class PieChartComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.effectRef?.destroy();
     this.chart?.destroy();
   }
 

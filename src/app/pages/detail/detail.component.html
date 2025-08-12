@@ -1,14 +1,15 @@
 <div class="container flex flex-col align-items-center gap-16">
-  <h1 class="main-title xs-full-width">Name of the country</h1>
+  <h1 class="main-title xs-full-width">{{ olympic()?.country }}</h1>
 
   <div class="flex xs-flex-col xs-full-width">
-    <app-card title="Number of entries" number="3"></app-card>
-    <app-card title="Total number medals" number="5"></app-card>
-    <app-card title="Total number of athletes" number="32"></app-card>
+    <app-card title="Number of entries" number="{{ olympic()?.participations?.length }}"></app-card>
+    <app-card title="Total number medals" number="{{ totalMedalsCount() }}"></app-card>
+    <app-card title="Total number of athletes" number="{{ totalAthleteCount() }}"></app-card>
 
   </div>
 
   <div class="container-chart">
     <!--   TODO: chart     -->
+    <pre>{{ olympic() | json }}</pre>
   </div>
 </div>

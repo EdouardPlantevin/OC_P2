@@ -34,7 +34,9 @@ export class LineChartComponent implements OnInit, OnDestroy {
     options: {
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          suggestedMin: 0,
+          suggestedMax: 100
         }
       },
       responsive: true,

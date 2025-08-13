@@ -20,6 +20,10 @@
   align-items: center;
 }
 
+.space-between {
+  justify-content: space-between;
+}
+
 .gap-12 {
   gap: 12px;
 }
@@ -46,6 +50,10 @@
 
 .text-bold {
   font-weight: 700;
+}
+
+.w-100 {
+  width: 100%;
 }
 
 .xs-flex-col {

@@ -1,6 +1,6 @@
 import {Component, computed, inject} from '@angular/core';
 import {CardComponent} from "../../components/card/card.component";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, RouterLink} from "@angular/router";
 import {OlympicService} from "../../core/services/olympic.service";
 import {LineChartComponent} from "../../components/line-chart/line-chart.component";
 
@@ -8,7 +8,8 @@ import {LineChartComponent} from "../../components/line-chart/line-chart.compone
   selector: 'app-detail',
   imports: [
     CardComponent,
-    LineChartComponent
+    LineChartComponent,
+    RouterLink
   ],
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss'

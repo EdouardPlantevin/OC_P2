@@ -20,9 +20,4 @@ export class HomeComponent {
 
   public olympics: Signal<OlympicCountry[] | []> = computed(() => this.olympicService.olympicsResource.value() || []);
 
-  constructor() {
-    effect(() => {
-      // console.log(this.olympics().length);
-    });
-  }
 }

@@ -2,10 +2,10 @@
   <h1 class="main-title xs-full-width">Medals per Country</h1>
 
   <div class="flex xs-flex-col xs-full-width">
-    <app-card title="Number of JOs" number="{{ olympics()[0].participations.length || 0 }}"></app-card>
+    <app-card title="Number of JOs" number="{{ olympics()[0] ? olympics()[0].participations.length : 0 }}"></app-card>
     <app-card title="Number of countries" number="{{ olympics().length || 0 }}"></app-card>
   </div>
-  <div class="container-chart">
+  <div class="chart-container">
     <app-pie-chart [olympicCountries]="olympics()"/>
   </div>
 </div>

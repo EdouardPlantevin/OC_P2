@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, OnDestroy, OnInit } from '@angular/core';
+import {Component, computed, effect, inject, input, OnDestroy, OnInit, signal} from '@angular/core';
 import {
   ActiveElement,
   Chart,
@@ -11,18 +11,22 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { OlympicCountry } from '../../core/models/Olympic';
 import { OlympicService } from '../../core/services/olympic.service';
 import { Router } from '@angular/router';
+import {LoaderComponent} from "../loader/loader.component";
 
 Chart.register(ChartDataLabels, ...registerables, Colors);
 
 @Component({
   selector: 'app-pie-chart',
-  imports: [],
+  imports: [
+    LoaderComponent
+  ],
   templateUrl: './pie-chart.component.html',
   styleUrl: './pie-chart.component.scss'
 })
 export class PieChartComponent implements OnInit, OnDestroy {
   private readonly olympicService = inject(OlympicService);
   private readonly router = inject(Router);
+  isLoading = signal<boolean>(true);
 
   readonly olympicCountries = input.required<OlympicCountry[]>();
 
@@ -74,9 +78,10 @@ export class PieChartComponent implements OnInit, OnDestroy {
           }
         },
       },
-      onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
+      onClick: async (_event: ChartEvent, elements: ActiveElement[]) => {
         if (elements?.length) {
-          const countryId = this.olympicFormattedChartPie().countryId[elements[0].index];
+          const formatted = await this.olympicFormattedChartPie();
+          const countryId = formatted.countryId[elements[0].index];
           void this.router.navigateByUrl(`/detail/${countryId}`);
         }
       }
@@ -87,12 +92,13 @@ export class PieChartComponent implements OnInit, OnDestroy {
   private chart?: Chart<'pie', number[], string>;
 
   constructor() {
-    effect(() => {
+    effect(async () => {
       if (!this.chart) return;
-      const formatted = this.olympicFormattedChartPie();
+      const formatted = await this.olympicFormattedChartPie();
       this.chart.data.labels = formatted.countryName;
       this.chart.data.datasets[0].data = formatted.totalMedals;
       this.chart.update();
+      this.isLoading.set(false);
     });
   }
 

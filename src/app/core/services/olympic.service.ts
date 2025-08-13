@@ -22,7 +22,10 @@ export class OlympicService {
   // < Get Data
 
   // > Fonction
-  getFormattedOlympicCountriesPieChart(olympicsCountry: OlympicCountry[]) {
+  async getFormattedOlympicCountriesPieChart(olympicsCountry: OlympicCountry[]) {
+
+    // On simule un délai de 1 secondes
+    await new Promise(resolve => setTimeout(resolve, 1000));
     // On crée un tableau intermédiaire avec les pays et leur total de médailles
     let olympicsFormatted = olympicsCountry.map(olympic => {
       return {
@@ -43,7 +46,9 @@ export class OlympicService {
     };
   }
 
-  getFormattedOlympicCountriesLineChart(olympicsCountry?: OlympicCountry) {
+  async getFormattedOlympicCountriesLineChart(olympicsCountry?: OlympicCountry) {
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     if (!olympicsCountry) return { year: [], totalMedals: [] };
 

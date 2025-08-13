@@ -32,8 +32,6 @@ export class OlympicService {
       };
     });
 
-    console.log(olympicsFormatted)
-
     //On trie par totalMedals décroissant
     olympicsFormatted.sort((a, b) => b.totalMedals - a.totalMedals);
 

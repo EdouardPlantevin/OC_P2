@@ -62,7 +62,17 @@ export class PieChartComponent implements OnInit, OnDestroy {
         },
         legend: {
           display: false
-        }
+        },
+        tooltip: {
+          backgroundColor: '#008080FF',
+          padding: 15,
+          displayColors: false,
+          callbacks: {
+            label: (context) => {
+              return `${context.parsed || 0} 🏅`;
+            }
+          }
+        },
       },
       onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
         if (elements?.length) {

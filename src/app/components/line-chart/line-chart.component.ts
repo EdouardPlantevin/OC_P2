@@ -46,6 +46,15 @@ export class LineChartComponent implements OnInit, OnDestroy {
         },
         legend: {
           display: false
+        },
+        datalabels: {
+          align: 'top',
+          anchor: 'end',
+          offset: 6,
+          color: '#000',
+          font: {
+            weight: 'bold'
+          }
         }
       },
     }

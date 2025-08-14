@@ -1,5 +1,6 @@
 <div class="container ">
   <a routerLink="/">Back</a>
+  @if (olympic()) {
   <div class="flex flex-col align-items-center gap-16">
     <h1 class="main-title xs-full-width">{{ olympic()?.country }}</h1>
 
@@ -10,12 +11,11 @@
 
     </div>
 
-    @if (olympic()) {
-      <div class="container-chart">
-        <app-line-chart [olympicCountry]="olympic()" />
-      </div>
-    } @else {
-      <p>Chargement...</p>
-    }
+    <div class="container-chart">
+      <app-line-chart [olympicCountry]="olympic()" />
+    </div>
   </div>
+  } @else {
+    <p>Une erreur est survenue</p>
+  }
 </div>

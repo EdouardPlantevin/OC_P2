@@ -12,12 +12,15 @@ export class OlympicService {
 
   olympicsResource = httpResource<OlympicCountry[]>(() => ({
     url: this.olympicUrl,
-    method: 'GET'
+    method: 'GET',
   }));
 
   getOlympicById(id: number): OlympicCountry | undefined {
-    const olympics = this.olympicsResource.value();
-    return olympics?.find(olympicCountry => olympicCountry.id == id);
+    const olympics = this.olympicsResource;
+    if (olympics.error()) {
+      return undefined;
+    }
+    return olympics.value()?.find(olympicCountry => olympicCountry.id == id);
   }
   // < Get Data
 
@@ -30,7 +33,7 @@ export class OlympicService {
     let olympicsFormatted = olympicsCountry.map(olympic => {
       return {
         countryName: olympic.country,
-        totalMedals: olympic.participations.reduce((total, participation) => total + participation.medalsCount, 0),
+        totalMedals: olympic.participations?.reduce((total, participation) => total + participation.medalsCount, 0),
         countryId: olympic.id
       };
     });

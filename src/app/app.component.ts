@@ -10,8 +10,7 @@ import {CommonModule} from "@angular/common";
   imports: [
     RouterOutlet,
     CommonModule
-  ],
-  standalone: true
+  ]
 })
 export class AppComponent {
 }

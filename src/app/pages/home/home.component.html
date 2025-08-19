@@ -1,18 +1,11 @@
 <div class="container flex flex-col align-items-center gap-16">
   <h1 class="main-title xs-full-width">Medals per Country</h1>
 
-  @let olympicsData = olympics();
+  @let olympicsData = olympics().value();
 
-  <!-- LOADING -->
-  @if (olympicsData == "loading") {
-    <p>Chargement en cours</p>
-  }
-
-  @if (olympicsData && Array.isArray(olympicsData)) {
+  @if (olympicsData) {
     <div class="flex xs-flex-col xs-full-width">
-      @if (olympicsData[0] && olympicsData[0].participations) {
-        <app-card title="Number of JOs" number="{{ olympicsData[0] ? olympicsData[0].participations.length : 0 }}" />
-      }
+      <app-card title="Number of JOs" number="{{ maxParticipations() }}" />
       <app-card title="Number of countries" number="{{ olympicsData.length || 0 }}" />
     </div>
     <div class="chart-container">

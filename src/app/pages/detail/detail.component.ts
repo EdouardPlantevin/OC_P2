@@ -1,8 +1,9 @@
-import {Component, computed, inject} from '@angular/core';
+import {Component, computed, inject, Signal} from '@angular/core';
 import {CardComponent} from "../../components/card/card.component";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {OlympicService} from "../../core/services/olympic.service";
 import {LineChartComponent} from "../../components/line-chart/line-chart.component";
+import {OlympicCountry} from "../../core/models/Olympic";
 
 @Component({
   selector: 'app-detail',
@@ -15,23 +16,23 @@ import {LineChartComponent} from "../../components/line-chart/line-chart.compone
   styleUrl: './detail.component.scss'
 })
 export class DetailComponent {
-  private route = inject(ActivatedRoute);
-  private olympicService = inject(OlympicService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private olympicService: OlympicService = inject(OlympicService);
 
   // Get olympic
-  id: number = this.route.snapshot.params['id'];
-  public olympic = computed(() => this.olympicService.getOlympicById(this.id));
+  public id: number = this.route.snapshot.params['id'];
+  public olympic: Signal<OlympicCountry | undefined> = computed(() => this.olympicService.getOlympicById(this.id));
 
-  totalAthleteCount = computed(() => {
-    const olympicData = this.olympic();
+  totalAthleteCount: Signal<number> = computed(() => {
+    const olympicData: OlympicCountry | undefined = this.olympic();
     if (!olympicData || !olympicData.participations) {
       return 0;
     }
     return olympicData.participations.reduce((total, participation) => total + participation.athleteCount, 0);
   });
 
-  totalMedalsCount = computed(() => {
-    const olympicData = this.olympic();
+  totalMedalsCount: Signal<number> = computed(() => {
+    const olympicData: OlympicCountry | undefined = this.olympic();
     if (!olympicData || !olympicData.participations) {
       return 0;
     }

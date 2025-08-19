@@ -20,17 +20,23 @@ export class OlympicService {
     if (olympics.error()) {
       return undefined;
     }
-    return olympics.value()?.find(olympicCountry => olympicCountry.id == id);
+    const olympic = olympics.value()?.find(olympicCountry => olympicCountry.id == id);
+
+    //On vérifie que tous les champs sont bien présent
+    if (olympic?.country && olympic?.participations) {
+      return olympic;
+    }
+    return undefined;
   }
   // < Get Data
 
   // > Fonction
   async getFormattedOlympicCountriesPieChart(olympicsCountry: OlympicCountry[]) {
 
-    // On simule un délai de 1 secondes
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // On simule un délai de 0.5 secondes
+    await new Promise(resolve => setTimeout(resolve, 500));
     // On crée un tableau intermédiaire avec les pays et leur total de médailles
-    let olympicsFormatted = olympicsCountry.map(olympic => {
+    let olympicsFormatted = olympicsCountry.filter(olympic => olympic.country).map(olympic => {
       return {
         countryName: olympic.country,
         totalMedals: olympic.participations?.reduce((total, participation) => total + participation.medalsCount, 0),
@@ -51,7 +57,7 @@ export class OlympicService {
 
   async getFormattedOlympicCountriesLineChart(olympicsCountry?: OlympicCountry) {
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     if (!olympicsCountry) return { year: [], totalMedals: [] };
 

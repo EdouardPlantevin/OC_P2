@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { take } from 'rxjs';
-import { OlympicService } from './core/services/olympic.service';
+import { Component } from '@angular/core';
 import {RouterOutlet} from "@angular/router";
 import {CommonModule} from "@angular/common";
 

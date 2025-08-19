@@ -15,7 +15,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        void this.router.navigate(['/not-found'], {queryParams: {statusCode: error.status}});
+        void this.router.navigate(['/error'], {queryParams: {statusCode: error.status}});
         return throwError(() => error);
       })
     );

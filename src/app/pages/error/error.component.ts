@@ -16,18 +16,18 @@ const STATUS_MESSAGES: Record<number, string> = {
 };
 
 @Component({
-  selector: 'app-not-found',
-  templateUrl: './not-found.component.html',
+  selector: 'app-error',
+  templateUrl: './error.component.html',
   imports: [
     RouterLink
   ],
-  styleUrl: './not-found.component.scss'
+  styleUrl: './error.component.scss'
 })
-export class NotFoundComponent implements OnInit {
+export class ErrorComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   statusCode: number | null = null;
-  message = "Une erreur inattendue est survenue.";
+  message = "";
 
   getErrorMessage(status?: number | null): string {
     if (status == null || Number.isNaN(status)) {

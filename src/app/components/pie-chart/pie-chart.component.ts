@@ -1,16 +1,21 @@
-import {Component, computed, effect, inject, input, OnDestroy, OnInit, signal} from '@angular/core';
 import {
-  ActiveElement,
-  Chart,
-  ChartConfiguration,
-  ChartEvent,
-  Colors,
-  registerables
-} from 'chart.js';
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  InputSignal,
+  OnDestroy,
+  OnInit,
+  Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
+import {ActiveElement, Chart, ChartConfiguration, ChartEvent, Colors, registerables} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { OlympicCountry } from '../../core/models/Olympic';
-import { OlympicService } from '../../core/services/olympic.service';
-import { Router } from '@angular/router';
+import {OlympicCountry} from '../../core/models/Olympic';
+import {OlympicService} from '../../core/services/olympic.service';
+import {Router} from '@angular/router';
 import {LoaderComponent} from "../loader/loader.component";
 
 Chart.register(ChartDataLabels, ...registerables, Colors);
@@ -24,13 +29,17 @@ Chart.register(ChartDataLabels, ...registerables, Colors);
   styleUrl: './pie-chart.component.scss'
 })
 export class PieChartComponent implements OnInit, OnDestroy {
-  private readonly olympicService = inject(OlympicService);
-  private readonly router = inject(Router);
-  isLoading = signal<boolean>(true);
+  private readonly olympicService: OlympicService = inject(OlympicService);
+  private readonly router: Router = inject(Router);
+  isLoading: WritableSignal<boolean> = signal<boolean>(true);
 
-  readonly olympicCountries = input.required<OlympicCountry[]>();
+  readonly olympicCountries: InputSignal<OlympicCountry[]> = input.required<OlympicCountry[]>();
 
-  readonly olympicFormattedChartPie = computed(() =>
+  readonly olympicFormattedChartPie: Signal<Promise<{
+    countryName: string[];
+    totalMedals: number[];
+    countryId: number[]
+  }>> = computed(() =>
     this.olympicService.getFormattedOlympicCountriesPieChart(this.olympicCountries())
   );
 

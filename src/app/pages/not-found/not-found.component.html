@@ -1,4 +1,5 @@
 <div class="center">
-  <h2>No corresponding page found</h2>
-  <a routerLink="">Go back</a>
+  <h2>Erreur {{ statusCode ?? '' }}</h2>
+  <p>{{ message }}</p>
+  <a routerLink="/">Revenir à l’accueil</a>
 </div>

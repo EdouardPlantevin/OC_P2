@@ -10,6 +10,9 @@ export class OlympicService {
   // > Get Data
   private olympicUrl = './assets/mock/olympic.json';
 
+  // HTTP ERROR STATUS
+  // private olympicUrl = 'https://mock.httpstatus.io/404'
+
   olympicsResource = httpResource<OlympicCountry[]>(() => ({
     url: this.olympicUrl,
     method: 'GET',

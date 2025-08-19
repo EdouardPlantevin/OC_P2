@@ -27,7 +27,7 @@ export class NotFoundComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   statusCode: number | null = null;
-  message = "Une erreur inattendue est survenue.";
+  message = "";
 
   getErrorMessage(status?: number | null): string {
     if (status == null || Number.isNaN(status)) {

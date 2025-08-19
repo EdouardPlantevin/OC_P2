@@ -1,4 +1,15 @@
-import {Component, computed, effect, inject, input, InputSignal, OnDestroy, OnInit, signal} from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  InputSignal,
+  OnDestroy,
+  OnInit, Signal,
+  signal,
+  WritableSignal
+} from '@angular/core';
 import {Chart, ChartConfiguration, Colors, registerables} from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {OlympicCountry} from "../../core/models/Olympic";
@@ -19,8 +30,8 @@ export class LineChartComponent implements OnInit, OnDestroy {
 
   readonly olympicCountry: InputSignal<OlympicCountry | undefined> = input<OlympicCountry | undefined>();
   readonly olympicService: OlympicService = inject(OlympicService);
-  isLoading = signal<boolean>(true);
-  readonly olympicFormatted = computed(() => {
+  isLoading: WritableSignal<boolean> = signal<boolean>(true);
+  readonly olympicFormatted: Signal<Promise<{ year: string[]; totalMedals: number[] }>> = computed(() => {
     return this.olympicService.getFormattedOlympicCountriesLineChart(this.olympicCountry());
   })
   private chart?: Chart<'line', number[], string>;

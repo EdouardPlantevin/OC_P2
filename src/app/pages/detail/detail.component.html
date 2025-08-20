@@ -1,14 +1,14 @@
 <div class="container ">
   <a routerLink="/">Back</a>
-  @let olympicData = olympic();
+  @let olympicData = olympic;
   @if (olympicData) {
   <div class="flex flex-col align-items-center gap-16">
     <h1 class="main-title xs-full-width">{{ olympicData.country }}</h1>
 
     <div class="flex xs-flex-col xs-full-width">
       <app-card title="Number of entries" number="{{ olympicData.participations.length }}"></app-card>
-      <app-card title="Total number medals" number="{{ totalMedalsCount() }}"></app-card>
-      <app-card title="Total number of athletes" number="{{ totalAthleteCount() }}"></app-card>
+      <app-card title="Total number medals" number="{{ totalMedalsCount }}"></app-card>
+      <app-card title="Total number of athletes" number="{{ totalAthleteCount }}"></app-card>
     </div>
 
     <div class="container-chart">

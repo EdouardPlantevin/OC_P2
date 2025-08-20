@@ -1,16 +1,15 @@
 import {
   Component,
-  computed,
-  effect,
   input,
   InputSignal,
   OnDestroy,
-  OnInit, Signal
+  OnInit
 } from '@angular/core';
 import {Chart, ChartConfiguration, Colors, registerables} from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import {OlympicCountryInterface} from "../../core/models/OlympicCountryInterface";
 import {FormattedLineChartInterface} from "../../core/models/FormattedLineChartInterface";
+import {Observable, Subscription} from "rxjs";
 
 Chart.register(ChartDataLabels, ...registerables, Colors);
 
@@ -22,9 +21,8 @@ Chart.register(ChartDataLabels, ...registerables, Colors);
 export class LineChartComponent implements OnInit, OnDestroy {
 
   readonly olympicCountry: InputSignal<OlympicCountryInterface | undefined> = input<OlympicCountryInterface | undefined>();
-  readonly olympicFormatted: Signal<FormattedLineChartInterface> = computed(() => {
-    return this.getFormattedOlympicCountriesLineChart(this.olympicCountry());
-  })
+  public olympicFormattedSubscription!: Subscription
+
   private chart?: Chart<'line', number[], string>;
   private formatted?: FormattedLineChartInterface;
 
@@ -67,29 +65,30 @@ export class LineChartComponent implements OnInit, OnDestroy {
     }
   }
 
-  constructor() {
-    effect(async () => {
-      if (!this.chart) return;
-      this.formatted = this.olympicFormatted();
-      this.chart.data.labels = this.formatted?.year;
-      this.chart.data.datasets[0].data = this.formatted?.totalMedals;
-      this.chart.update();
+  private getFormattedOlympicCountriesLineChart(olympicsCountry?: OlympicCountryInterface): Observable<FormattedLineChartInterface> {
+    return new Observable(observer => {
+      observer.next({
+        year: olympicsCountry?.participations?.map(p => String(p.year)) ?? [],
+        totalMedals: olympicsCountry?.participations?.map(p => p.medalsCount) ?? []
+      });
+      observer.complete();
     });
-  }
-
-  private getFormattedOlympicCountriesLineChart(olympicsCountry?: OlympicCountryInterface): FormattedLineChartInterface {
-    return {
-      year: olympicsCountry?.participations?.map(p => String(p.year)) ?? [],
-      totalMedals: olympicsCountry?.participations?.map(p => p.medalsCount) ?? []
-    };
   }
 
 
   ngOnInit(): void {
-    this.chart = new Chart('lineChart', this.config);
+    this.olympicFormattedSubscription = this.getFormattedOlympicCountriesLineChart(this.olympicCountry()).subscribe(formatted => {
+      this.formatted = formatted
+
+      this.chart = new Chart('lineChart', this.config);
+      this.chart.data.labels = this.formatted.year;
+      this.chart.data.datasets[0].data = this.formatted.totalMedals ?? 0;
+      this.chart.update();
+    });
   }
 
   ngOnDestroy(): void {
+    this.olympicFormattedSubscription.unsubscribe();
     this.chart?.destroy();
   }
 

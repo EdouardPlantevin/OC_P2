@@ -1,15 +1,15 @@
 <div class="container flex flex-col align-items-center gap-16">
   <h1 class="main-title xs-full-width">Medals per Country</h1>
 
-  @let olympicsData = olympics().value();
-
-  @if (olympicsData) {
+  @if (olympics) {
     <div class="flex xs-flex-col xs-full-width">
-      <app-card title="Number of JOs" number="{{ maxParticipations() }}" />
-      <app-card title="Number of countries" number="{{ olympicsData.length || 0 }}" />
+      <app-card title="Number of JOs" number="{{ maxParticipations }}" />
+      <app-card title="Number of countries" number="{{ olympics.length || 0 }}" />
     </div>
     <div class="chart-container">
-      <app-pie-chart [olympicCountries]="olympicsData"/>
+      @if (olympics.length > 0) {
+        <app-pie-chart [olympicCountries]="olympics"/>
+      })
     </div>
   } @else {
     <p>Une erreur est survenue</p>

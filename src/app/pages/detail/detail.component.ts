@@ -1,10 +1,11 @@
-import {Component, computed, inject, Signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {CardComponent} from "../../components/card/card.component";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {OlympicService} from "../../core/services/olympic.service";
 import {LineChartComponent} from "../../components/line-chart/line-chart.component";
 import {OlympicCountryInterface} from "../../core/models/OlympicCountryInterface";
 import {ParticipationInterface} from "../../core/models/ParticipationInterface";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-detail',
@@ -16,27 +17,30 @@ import {ParticipationInterface} from "../../core/models/ParticipationInterface";
   templateUrl: './detail.component.html',
   styleUrl: './detail.component.scss'
 })
-export class DetailComponent {
-  private route: ActivatedRoute = inject(ActivatedRoute);
+export class DetailComponent implements OnInit, OnDestroy {
   private olympicService: OlympicService = inject(OlympicService);
 
-  // Get olympic
+  private route: ActivatedRoute = inject(ActivatedRoute);
   public id: number = this.route.snapshot.params['id'];
-  public olympic: Signal<OlympicCountryInterface | undefined> = computed(() => this.olympicService.getOlympicById(this.id));
 
-  totalAthleteCount: Signal<number> = computed(() => {
-    const olympicData: OlympicCountryInterface | undefined = this.olympic();
-    if (!olympicData || !olympicData.participations) {
-      return 0;
-    }
-    return olympicData.participations.reduce((total: number, participation: ParticipationInterface) => total + participation.athleteCount, 0);
-  });
+  private olympicSubscription!: Subscription;
+  public olympic: OlympicCountryInterface | undefined = undefined;
+  public totalAthleteCount: number = 0;
+  public totalMedalsCount: number = 0;
 
-  totalMedalsCount: Signal<number> = computed(() => {
-    const olympicData: OlympicCountryInterface | undefined = this.olympic();
-    if (!olympicData || !olympicData.participations) {
-      return 0;
-    }
-    return olympicData.participations.reduce((total: number, participation: ParticipationInterface) => total + participation.medalsCount, 0);
-  });
+  ngOnInit(): void {
+    this.olympicSubscription = this.olympicService.getOlympicById(this.id).subscribe(olympicData => {
+      this.olympic = olympicData;
+    })
+
+    this.totalAthleteCount =
+      this.olympic?.participations?.reduce((total, { athleteCount }) => total + athleteCount, 0) ?? 0;
+
+    this.totalMedalsCount =
+      this.olympic?.participations.reduce((total: number, participation: ParticipationInterface) => total + participation.medalsCount, 0) ?? 0
+  }
+
+  ngOnDestroy(): void {
+    this.olympicSubscription.unsubscribe();
+  }
 }

@@ -1,8 +1,7 @@
-import {httpResource, HttpResourceRef} from '@angular/common/http';
+import {HttpClient, HttpResourceRef} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {OlympicCountryInterface} from "../models/OlympicCountryInterface";
-import {FormattedPieChartInterface} from "../models/FormattedPieChartInterface";
-import {FormattedLineChartInterface} from "../models/FormattedLineChartInterface";
+import {BehaviorSubject, catchError, map, Observable, tap} from "rxjs";
 
 @Injectable({
   providedIn: 'root',
@@ -15,23 +14,28 @@ export class OlympicService {
   // HTTP ERROR STATUS
   // private olympicUrl = 'https://mock.httpstatus.io/404'
 
-  olympicsResource: HttpResourceRef<OlympicCountryInterface[] | undefined> = httpResource<OlympicCountryInterface[]>(() => ({
-    url: this.olympicUrl,
-    method: 'GET',
-  }));
+  private olympics$: BehaviorSubject<OlympicCountryInterface[]> = new BehaviorSubject<OlympicCountryInterface[]>([]);
 
-  public getOlympicById(id: number): OlympicCountryInterface | undefined {
-    const olympics: HttpResourceRef<OlympicCountryInterface[] | undefined> = this.olympicsResource;
-    if (olympics.error()) {
-      return undefined;
-    }
-    const olympic: OlympicCountryInterface | undefined = olympics.value()?.find(olympicCountry => olympicCountry.id == id);
+  constructor(private http: HttpClient) {}
 
-    //On vérifie que tous les champs sont bien présent
-    if (olympic?.country && olympic?.participations) {
-      return olympic;
-    }
-    return undefined;
+  loadInitialData(): Observable<OlympicCountryInterface[]> {
+    return this.http.get<OlympicCountryInterface[]>(this.olympicUrl).pipe(
+      tap((value: OlympicCountryInterface[]) => this.olympics$.next(value)),
+      catchError((error, caught) => {
+        this.olympics$.next([]);
+        return caught;
+      })
+    );
+  }
+
+  public getOlympics(): Observable<OlympicCountryInterface[]> {
+    return this.olympics$.asObservable();
+  }
+
+  public getOlympicById(id: number): Observable<OlympicCountryInterface | undefined> {
+    return this.olympics$.asObservable().pipe(map((countries: OlympicCountryInterface[]) => {
+      return countries.find(country => country.id == id);
+    }))
   }
   // < Get Data
 

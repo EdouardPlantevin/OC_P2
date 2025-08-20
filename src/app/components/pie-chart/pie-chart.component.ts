@@ -1,15 +1,10 @@
 import {
   Component,
-  computed,
-  effect,
   inject,
   input,
   InputSignal,
   OnDestroy,
   OnInit,
-  Signal,
-  signal,
-  WritableSignal
 } from '@angular/core';
 import {ActiveElement, Chart, ChartConfiguration, ChartEvent, Colors, registerables} from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -17,6 +12,7 @@ import {OlympicCountryInterface} from '../../core/models/OlympicCountryInterface
 import {Router} from '@angular/router';
 import {FormattedPieChartInterface} from "../../core/models/FormattedPieChartInterface";
 import {ParticipationInterface} from "../../core/models/ParticipationInterface";
+import {Observable, Subscription} from "rxjs";
 
 Chart.register(ChartDataLabels, ...registerables, Colors);
 
@@ -28,13 +24,12 @@ Chart.register(ChartDataLabels, ...registerables, Colors);
 })
 export class PieChartComponent implements OnInit, OnDestroy {
   private readonly router: Router = inject(Router);
-  isLoading: WritableSignal<boolean> = signal<boolean>(true);
 
   readonly olympicCountries: InputSignal<OlympicCountryInterface[]> = input.required<OlympicCountryInterface[]>();
+  private olympicFormattedSubscription!: Subscription
 
-  readonly olympicFormattedChartPie: Signal<FormattedPieChartInterface> = computed(() =>
-    this.getFormattedOlympicCountriesPieChart(this.olympicCountries())
-  );
+  private chart?: Chart<'pie', number[], string>;
+  private formatted?: FormattedPieChartInterface;
 
   public readonly config: ChartConfiguration<'pie', number[], string> = {
     type: 'pie',
@@ -90,21 +85,7 @@ export class PieChartComponent implements OnInit, OnDestroy {
     plugins: [ChartDataLabels]
   };
 
-  private chart?: Chart<'pie', number[], string>;
-  private formatted?: FormattedPieChartInterface;
-
-  constructor() {
-    effect(async () => {
-      if (!this.chart) return;
-      this.formatted = this.olympicFormattedChartPie();
-      this.chart.data.labels = this.formatted.countryName;
-      this.chart.data.datasets[0].data = this.formatted.totalMedals;
-      this.chart.update();
-      this.isLoading.set(false);
-    });
-  }
-
-  getFormattedOlympicCountriesPieChart(olympicsCountry: OlympicCountryInterface[]): FormattedPieChartInterface {
+  getFormattedOlympicCountriesPieChart(olympicsCountry: OlympicCountryInterface[]): Observable<FormattedPieChartInterface> {
     // On crée un tableau intermédiaire avec les pays et leur total de médailles
     let olympicsFormatted = olympicsCountry.filter(olympic => olympic.country).map(olympic => {
       return {
@@ -118,19 +99,33 @@ export class PieChartComponent implements OnInit, OnDestroy {
     olympicsFormatted.sort((a, b) => b.totalMedals - a.totalMedals);
 
     // On sépare en deux tableaux
-    return {
-      countryName: olympicsFormatted.map(item => item.countryName),
-      totalMedals: olympicsFormatted.map(item => item.totalMedals),
-      countryId: olympicsFormatted.map(item => item.countryId)
-    };
+
+    return new Observable(observer => {
+      observer.next({
+        countryName: olympicsFormatted.map(item => item.countryName),
+        totalMedals: olympicsFormatted.map(item => item.totalMedals),
+        countryId: olympicsFormatted.map(item => item.countryId)
+      });
+      observer.complete();
+    });
   }
 
   ngOnInit(): void {
-    this.chart = new Chart('PieChart', this.config);
+    this.olympicFormattedSubscription = this.getFormattedOlympicCountriesPieChart(this.olympicCountries()).subscribe(formatted => {
+      this.formatted = formatted
+
+      this.chart = new Chart('PieChart', this.config);
+      this.chart.data.labels = this.formatted.countryName;
+      this.chart.data.datasets[0].data = this.formatted.totalMedals;
+      this.chart.update();
+    })
   }
 
   ngOnDestroy(): void {
     this.chart?.destroy();
+    this.olympicFormattedSubscription.unsubscribe();
   }
+
+
 
 }
